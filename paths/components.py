@@ -2,7 +2,7 @@
 import discord
 import requests
 
-API_URL = "http://127.0.0.1:8000/api/paths/"
+API_URL_PATHS = "http://127.0.0.1:8000/api/paths/"
 
 class PathModal(discord.ui.Modal):
     def __init__(self):
@@ -35,12 +35,11 @@ class PathModal(discord.ui.Modal):
             "name": path_name,
             "duration_weeks": duration_weeks
         }
-        response = requests.post(f"{API_URL}add/", json=data)
+        response = requests.post(f"{API_URL_PATHS}create/", json=data)
         if response.status_code == 201:
             await interaction.response.send_message(f'Path "{path_name}" added successfully with duration {duration_weeks} weeks.', ephemeral=True)
         else:
             await interaction.response.send_message(f"Failed to add path. Status code: {response.status_code}, Response: {response.text}", ephemeral=True)
-
 
 
 class UpdatePathModal(discord.ui.Modal):
@@ -76,12 +75,11 @@ class UpdatePathModal(discord.ui.Modal):
             "name": path_name,
             "duration_weeks": duration_weeks
         }
-        response = requests.put(f"{API_URL}{self.path_id}/update/", json=data)
+        response = requests.put(f"{API_URL_PATHS}{self.path_id}/update/", json=data)
         if response.status_code == 200:
             await interaction.response.send_message(f'Path "{path_name}" updated successfully with duration {duration_weeks} weeks.', ephemeral=True)
         else:
             await interaction.response.send_message(f"Failed to update path. Status code: {response.status_code}, Response: {response.text}", ephemeral=True)
-
 
 
 class ConfirmDeleteModal(discord.ui.Modal):
@@ -103,12 +101,11 @@ class ConfirmDeleteModal(discord.ui.Modal):
             await interaction.response.send_message("Deletion cancelled. The typed name did not match.", ephemeral=True)
             return
 
-        response = requests.delete(f"{API_URL}{self.path_id}/delete/")
+        response = requests.delete(f"{API_URL_PATHS}{self.path_id}/delete/")
         if response.status_code == 204:
             await interaction.response.send_message(f'Path "{self.path_name}" deleted successfully.', ephemeral=True)
         else:
             await interaction.response.send_message(f"Failed to delete path. Status code: {response.status_code}, Response: {response.text}", ephemeral=True)
-
 
 
 class PathButton(discord.ui.Button):
@@ -121,7 +118,6 @@ class PathButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         modal = UpdatePathModal(self.path_id, self.path_name, self.duration_weeks)
         await interaction.response.send_modal(modal)
-
 
 
 class DeletePathButton(discord.ui.Button):
