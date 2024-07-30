@@ -7,7 +7,7 @@ from .models import Topic
 from .serializers import TopicSerializer
 
 
-class AddTopicView(APIView):
+class CreateTopicView(APIView):
     def post(self, request):
         serializer = TopicSerializer(data=request.data)
         serializer.is_valid(raise_exception=True) 
