@@ -43,15 +43,14 @@ class SelectPathButton(Button):
         response = requests.get(f"{API_URL_TOPICS}list/")
         if response.status_code == 200:
             topics = response.json()
-            topics = [topic for topic in topics if topic['path'] == path_id]
-            if not topics:
-                await interaction.response.send_message("No topics available for this path.", ephemeral=True)
-                return
-            
+            topics = [topic for topic in topics if topic['path'] == path_id]            
             # Sort topics by week in ascending order
             topics.sort(key=lambda x: x['week'])
             topic_list = "\n".join([f" ▫️ Week {topic['week']} - {topic['title']} " for topic in topics])
             await interaction.response.send_message(f"Topics for {self.path_name}:\n{topic_list}", ephemeral=True)
+        elif response.status_code == 404:
+                await interaction.response.send_message("No topics available for this path.", ephemeral=True)
+                return
         else:
             await interaction.response.send_message("Failed to fetch topics.", ephemeral=True)
         #     topic_list = "\n".join([f" ▫️ Week {topic['week']} - {topic['title']} " for topic in topics])
@@ -98,7 +97,7 @@ class SelectWeekButton(Button):
 
 class TopicModal(Modal):
     def __init__(self, path_id, path_name, week):
-        super().__init__(title=f"Add Topic to {path_name} - Week {week}")
+        super().__init__(title=f"Add Topic to {path_name}")
         self.path_id = path_id
         self.week = week
         self.title_input = TextInput(label="Title", required=True)

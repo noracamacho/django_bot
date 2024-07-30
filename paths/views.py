@@ -7,7 +7,7 @@ from .models import Path
 from .serializers import PathSerializer
 
 
-class AddPathView(APIView):
+class CreatePathView(APIView):
     def post(self, request):
         serializer = PathSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
